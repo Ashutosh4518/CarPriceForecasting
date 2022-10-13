@@ -1,8 +1,10 @@
+from math import floor
 from flask import Flask,render_template,request,redirect
 from flask_cors import CORS,cross_origin
 import pickle
 import pandas as pd
 import numpy as np
+import locale
 
 app = Flask(__name__)
 cors=CORS(app)
@@ -38,9 +40,13 @@ def predictres():
     prediction=model.predict(pd.DataFrame(columns=['name', 'company', 'year', 'kms_driven', 'fuel_type'],
                               data=np.array([car_model,company,year,driven,fuel_type]).reshape(1, 5)))
     print(prediction)
-
-    return str(np.round(prediction[0],2))	
-
+   # print("printing type of prediction")
+    #print(type(prediction))
+    
+    locale.setlocale(locale.LC_MONETARY, 'en_IN')
+    stringPrediction = locale.currency(float(prediction), grouping=True)
+    #return str(np.round(prediction[0],2))	
+    return str(stringPrediction)
 if __name__ == "__main__":
 	app.run(debug = True)
 
